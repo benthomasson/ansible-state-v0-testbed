@@ -31,6 +31,9 @@
         command: define
         name: br0
         xml: '{{ lookup("template", "network/br0.xml") }}'
+    - virt_net:
+        command: start
+        name: br0
 
 
 ...
