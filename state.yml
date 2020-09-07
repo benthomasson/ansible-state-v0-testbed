@@ -1,0 +1,6 @@
+routers:
+  - name: Router1
+  - name: Router2
+hosts:
+  - name: Host1
+  - name: Host2

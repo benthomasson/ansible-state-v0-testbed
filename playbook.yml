@@ -1,0 +1,36 @@
+---
+- name: Build v0 testbed
+  hosts: localhost
+  gather_facts: False
+  become: yes
+  tasks:
+    - debug:
+        msg: hi
+    - package:
+        name: "{{item}}"
+        state: present
+        use: dnf
+      with_items:
+        - bridge-utils
+        - libvirt
+        - virt-install
+        - qemu-kvm
+    - shell: lsmod | grep kvm
+    - package:
+        name: "{{item}}"
+        state: present
+        use: dnf
+      with_items:
+        - virt-top
+        - libguestfs-tools
+    - service:
+        name: libvirtd
+        enabled: yes
+        state: started
+    - virt_net:
+        command: define
+        name: br0
+        xml: '{{ lookup("template", "network/br0.xml") }}'
+
+
+...
