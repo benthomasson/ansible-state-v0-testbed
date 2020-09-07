@@ -1,0 +1,12 @@
+virt-install -n vyos_r2 \
+  --ram 4096 \
+  --vcpus 2 \
+  --cdrom /var/lib/libvirt/images/vyos.iso \
+  --os-type linux \
+  --os-variant debian10 \
+  --network network=default \
+  --graphics vnc \
+  --hvm \
+  --virt-type kvm \
+  --disk path=/var/lib/libvirt/images/vyos_r2.qcow2,bus=virtio,size=8 \
+  --noautoconsole
