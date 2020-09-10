@@ -47,5 +47,19 @@ Initialization:
         save
         exit
 
-     
+    13. Add repository for alpine to host1 and host2
+        echo 'http://nl.alpinelinux.org/alpine/v3.12/main/' >> /etc/apk/repositories
+        apk update
+        apk add python3
 
+    14. Add public key to hosts
+        scp ~/.ssh/id_rsa.pub ...
+        ssh ...
+        mkdir -p .ssh
+        chmod 700 .ssh
+        cat id_rsa.pub >> .ssh/authorized_kys
+        chmod 600 .ssh/authorized_kys
+
+    15. Ping everything
+        ansible -i inventory -m ping all
+    

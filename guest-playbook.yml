@@ -1,0 +1,9 @@
+---
+- name: Configure v0 testbed
+  hosts: all
+  gather_facts: False
+  become: yes
+  tasks:
+    - ping:
+
+
