@@ -15,3 +15,37 @@ Initialization:
 
 
 
+
+# Manual steps
+
+    1. Download and copy vyos and alpine linux to /var/lib/libvirt/images/vyos.iso and /var/lib/libvirt/images/alpine.iso
+    2. virsh define host1.xml
+    3. virsh define host2.xml
+    4. virsh define vyos1.xml
+    5. virsh define vyos2.xml
+    6. add this config to host1 and host2:
+        /etc/network/interfaces
+        auto lo
+        iface lo inet loopback
+        auto eth0
+        iface eth0 inet dhcp
+    7. Install sshd on host1 and host2:
+        apk add openssh
+    8. Set root password
+        passwd
+    9. allow root ssh
+        echo 'PermitRootLogin yes' >>  /etc/ssh/sshd_config
+    10. start ssh server
+        /etc/init.d/sshd start
+    11. restart networking
+        /etc/init.d/networking restart
+    12. Configure dhcp on vyos1 and vyo2 and enable ssh
+        config
+        set interfaces ethernet eth0 address dhcp
+        set service ssh port 22
+        commit
+        save
+        exit
+
+     
+
