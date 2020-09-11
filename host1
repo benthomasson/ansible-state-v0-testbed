@@ -1,0 +1,11 @@
+virt-install -n host1 \
+  --ram 4096 \
+  --vcpus 2 \
+  --cdrom /var/lib/libvirt/images/alpine.iso \
+  --os-type linux \
+  --os-variant  alpinelinux3.8 \
+  --network bridge:br0 \
+  --graphics vnc \
+  --hvm \
+  --virt-type kvm \
+  --disk path=/var/lib/libvirt/images/host1.qcow2,bus=virtio,size=8
