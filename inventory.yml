@@ -12,7 +12,11 @@ all:
       ansible_user: vyos
       ansible_host: 192.168.122.144
       ansible_python_interpreter: /usr/bin/python3
+      ansible_connection: network_cli
+      ansible_network_os: vyos
     vyos2:
       ansible_user: vyos
       ansible_host: 192.168.122.132
       ansible_python_interpreter: /usr/bin/python3
+      ansible_connection: network_cli
+      ansible_network_os: vyos

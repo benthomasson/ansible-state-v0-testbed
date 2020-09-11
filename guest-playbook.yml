@@ -4,6 +4,60 @@
   gather_facts: False
   become: yes
   tasks:
+    - debug:
+        msg: "{{state}}"
     - ping:
+    - debug:
+        msg: "{{item.name}}"
+      with_items: "{{state.routers}}"
+      when: item.name == inventory_hostname
+    - debug:
+        msg: "{{item.name}}"
+      with_items: "{{state.hosts}}"
+      when: item.name == inventory_hostname
+    - debug:
+        msg: "{{ state.hosts | selectattr('name', 'equalto', inventory_hostname) | list}}"
+    - set_fact:
+        my_state: "{{state.hosts | selectattr('name', 'equalto', inventory_hostname) | list | first }}"
+        is_router: false
+        is_host: true
+      when: state.hosts | selectattr('name', 'equalto', inventory_hostname) | list
+    - set_fact:
+        my_state: "{{state.routers | selectattr('name', 'equalto', inventory_hostname) | list | first }}"
+        is_router: true
+        is_host: false
+      when: state.routers | selectattr('name', 'equalto', inventory_hostname) | list
+    - debug:
+        msg: "{{my_state}}"
+    - debug:
+        msg: "set interfaces ethernet {{item.name}} address {{item.address}}/{{item.mask}}"
+      with_items: "{{my_state.interfaces}}"
+      when: is_router
+    - vyos_config:
+        lines:
+          - "set interfaces ethernet {{item.name}} address {{item.address}}/{{item.mask}}"
+      with_items: "{{my_state.interfaces}}"
+      when: is_router
+    - vyos_config:
+        lines:
+          - "set protocols ospf parameters router-id {{my_state.router_id}}"
+          - "set protocols ospf area 0 network {{my_state.ospf_network}}"
+      when: is_router
+    - debug:
+        msg: "ifconfig {{item.name}} {{item.address}} netmask {{item.mask}} up"
+      with_items: "{{my_state.interfaces}}"
+      when: is_host
+    - shell:
+        cmd: "ifconfig {{item.name}} {{item.address}} netmask {{item.mask}} up"
+      with_items: "{{my_state.interfaces}}"
+      when: is_host
+    - shell:
+        cmd: "route add default gw {{my_state.gateway}} {{my_state.gateway_if}}"
+      when: is_host
+    - hostname:
+        name: "{{inventory_hostname}}"
+      when: is_host
+
+
 
 
