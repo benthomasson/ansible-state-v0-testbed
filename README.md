@@ -57,9 +57,9 @@ Initialization:
         ssh ...
         mkdir -p .ssh
         chmod 700 .ssh
-        cat id_rsa.pub >> .ssh/authorized_kys
-        chmod 600 .ssh/authorized_kys
+        cat id_rsa.pub >> .ssh/authorized_keys
+        chmod 600 .ssh/authorized_keys
 
     15. Ping everything
-        ansible -i inventory -m ping all
+        ansible -i inventory.yml -m ping all
     
