@@ -5,7 +5,7 @@
 
 """
 Usage:
-    configure_hosts [options]
+    configure_routers [options]
 
 Options:
     -h, --help        Show this page
@@ -19,7 +19,7 @@ import sys
 import pexpect
 from getpass import getpass
 
-logger = logging.getLogger('configure_hosts')
+logger = logging.getLogger('configure_routers')
 
 
 def main(args=None):
@@ -39,7 +39,7 @@ def main(args=None):
     with open(os.path.expanduser('~/.ssh/id_rsa.pub')) as f:
         key = f.read()
 
-    for host in ['host1', 'host2']:
+    for host in ['vyos_r1', 'vyos_r2']:
         console = pexpect.spawn(f'sudo virsh console {host}')
         console.expect(r'password for.*:')
         console.send(passwd)
@@ -48,44 +48,34 @@ def main(args=None):
         console.expect('Connected to domain')
         console.send('\n')
         console.expect('login:')
-        console.send('root\n')
-        #console.expect('Password:')
-        #console.send('1234\n')
+        console.send('vyos\n')
+        console.expect('Password:')
+        console.send('vyos\n')
         with open(f'{host}.log', 'wb') as f:
             console.logfile = f
-            console.expect(r'#')
+            console.expect(r'$')
             console.send('\n')
+            console.expect(r'$')
+            console.send('configure\n')
             console.expect(r'#')
-            console.send('echo "auto lo\niface lo inet loopback\nauto eth0\niface eth0 inet dhcp\n" > /etc/network/interfaces\n')
+            console.send('set interfaces ethernet eth0 address dhcp\n')
             console.expect(r'#')
-            console.send('apk add openssh\n')
+            console.send('set service ssh port 22\n')
             console.expect(r'#')
-            #console.send('passwd\n')
-            #console.expect(r'New password:')
-            #console.send('1234\n')
-            #console.expect(r'Retype password:')
-            #console.send('1234\n')
-            #console.expect(r'#')
-            console.send("echo 'PermitRootLogin yes' >>  /etc/ssh/sshd_config\n")
+            console.send("commit\n")
             console.expect(r'#')
-            console.send('/etc/init.d/sshd start\n')
+            console.send('save\n')
             console.expect(r'#')
-            console.send('/etc/init.d/networking restart\n')
-            console.expect(r'#')
+            console.send('exit\n')
+            console.expect(r'$')
             console.send('mkdir -p ~/.ssh\n')
-            console.expect(r'#')
+            console.expect(r'$')
             console.send('chmod 700 .ssh\n')
-            console.expect(r'#')
+            console.expect(r'$')
             console.send(f'echo "{key}" >> .ssh/authorized_keys\n')
-            console.expect(r'#')
+            console.expect(r'$')
             console.send('chmod 600 .ssh/authorized_keys\n')
-            console.expect(r'#')
-            console.send("echo 'http://nl.alpinelinux.org/alpine/v3.12/main/' >> /etc/apk/repositories\n")
-            console.expect(r'#')
-            console.send("apk update\n")
-            console.expect(r'#')
-            console.send("apk add python3\n")
-            console.expect(r'#')
+            console.expect(r'$')
             console.send('exit\n')
             #console.interact()
     return 0
@@ -93,4 +83,5 @@ def main(args=None):
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
+
 
