@@ -1,0 +1,3 @@
+./configure_hosts.py
+./configure_routers.py
+./ping_all

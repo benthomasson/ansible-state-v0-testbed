@@ -1,0 +1,6 @@
+#!/bin/bash -ex
+
+virsh start host1
+virsh start host2
+virsh start vyos_r1
+virsh start vyos_r2

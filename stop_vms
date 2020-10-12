@@ -1,0 +1,6 @@
+#!/bin/bash -ex
+
+virsh destroy host1
+virsh destroy host2
+virsh destroy vyos_r1
+virsh destroy vyos_r2
