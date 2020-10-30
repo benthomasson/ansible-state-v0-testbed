@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 """
 Usage:
-    configure_hosts [options]
+    expect [options] <script> <host>...
 
 Options:
     -h, --help        Show this page
@@ -15,11 +14,11 @@ from docopt import docopt
 import logging
 import os
 import sys
-import yaml
 import pexpect
+import yaml
 from getpass import getpass
 
-logger = logging.getLogger('configure_hosts')
+logger = logging.getLogger('expect')
 
 
 def main(args=None):
@@ -38,47 +37,15 @@ def main(args=None):
     with open(os.path.expanduser('~/.ssh/id_rsa.pub')) as f:
         key = f.read()
 
-    script = '''
----
-command: "sudo virsh console {host}"
-script:
-    - expect: "password for.*:"
-    - send: "{passwd}"
-    - send: "\\n"
-    - send: "\\n"
-    - expect: "Connected to domain"
-    - send: "\\n"
-    - expect: "login:"
-    - send: "root\\n"
-    - logfile: "{host}.log"
-    - expect: "#"
-    - send: "echo 'auto lo\\niface lo inet loopback\\nauto eth0\\niface eth0 inet dhcp\\n' > /etc/network/interfaces\\n"
-    - expect: "#"
-    - send: "apk add openssh\\n"
-    - expect: "#"
-    - send: "echo 'PermitRootLogin yes' >>  /etc/ssh/sshd_config\\n"
-    - expect: "#"
-    - send: "/etc/init.d/sshd start\\n"
-    - expect: "#"
-    - send: "/etc/init.d/networking restart\\n"
-    - expect: "#"
-    - send: "mkdir -p ~/.ssh\\n"
-    - expect: "#"
-    - send: "chmod 700 .ssh\\n"
-    - expect: "#"
-    - send: "echo '{key}' >> .ssh/authorized_keys\\n"
-    - expect: "#"
-    - send: "echo 'http://nl.alpinelinux.org/alpine/v3.12/main/' >> /etc/apk/repositories\\n"
-    - expect: "#"
-    - send: "apk update\\n"
-    - expect: "#"
-    - send: "apk add python3\\n"
-    - expect: "#"
-    - send: "exit\\n"
-...
-    '''
+    with open(parsed_args['<script>']) as f:
+        script = f.read()
 
-    for host in ['host1', 'host2']:
+    hosts = parsed_args['<host>']
+
+    print(script)
+    print(hosts)
+
+    for host in hosts:
         loaded_script = yaml.safe_load(script.format(key=key, host=host, passwd=passwd))
         console = pexpect.spawn(loaded_script['command'])
 
