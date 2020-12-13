@@ -47,6 +47,7 @@ def main(args=None):
 
     for host in hosts:
         loaded_script = yaml.safe_load(script.format(key=key, host=host, passwd=passwd))
+
         console = pexpect.spawn(loaded_script['command'])
 
         logfile = None

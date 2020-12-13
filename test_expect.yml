@@ -45,5 +45,4 @@
             - send: "apk add python3\n"
             - expect: "#"
             - send: "exit\n"
-    
 ...
