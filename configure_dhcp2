@@ -1,0 +1,8 @@
+#!/bin/bash -ex
+#./configure_hosts.py
+#./expect.py host_script.yml host1 host2
+ansible-playbook test_expect.yml -e passwd=${1}
+#./configure_routers.py
+#./expect.py router_script.yml vyos_r1 vyos_r2
+ansible-playbook test_expect2.yml -e passwd=${1}
+./ping_all

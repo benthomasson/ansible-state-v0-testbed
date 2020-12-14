@@ -1,5 +1,5 @@
 ---
-- name: host expect script
+- name: router expect script
   hosts: localhost
   gather_facts: False
   become: yes
@@ -9,8 +9,8 @@
     key: "{{lookup('file', '~/.ssh/id_rsa.pub')}}"
   tasks:
     - with_items:
-       - host1
-       - host2
+       - vyos_r1
+       - vyos_r2
       expect:
         command: "sudo virsh console {{item}}"
         script:
@@ -21,30 +21,33 @@
             - expect: "Connected to domain"
             - send: "\n"
             - expect: "login:"
-            - send: "root\n"
+            - send: "vyos\n"
+            - expect: "Password:"
+            - send: "vyos\n"
             - logfile: "{{item}}.log"
+            - expect: "$"
+            - send: "\n"
+            - expect: "$"
+            - send: "configure\n"
             - expect: "#"
-            - send: "echo 'auto lo\niface lo inet loopback\nauto eth0\niface eth0 inet dhcp\n' > /etc/network/interfaces\n"
+            - send: "set interfaces ethernet eth0 address dhcp\n"
             - expect: "#"
-            - send: "apk add openssh\n"
+            - send: "set service ssh port 22\n"
             - expect: "#"
-            - send: "echo 'PermitRootLogin yes' >>  /etc/ssh/sshd_config\n"
+            - send: "commit\n"
             - expect: "#"
-            - send: "/etc/init.d/sshd start\n"
-            - expect: "#"
-            - send: "/etc/init.d/networking restart\n"
-            - expect: "#"
-            - send: "mkdir -p ~/.ssh\n"
-            - expect: "#"
-            - send: "chmod 700 .ssh\n"
-            - expect: "#"
-            - send: "echo '{{key}}' >> .ssh/authorized_keys\n"
-            - expect: "#"
-            - send: "echo 'http://nl.alpinelinux.org/alpine/v3.12/main/' >> /etc/apk/repositories\n"
-            - expect: "#"
-            - send: "apk update\n"
-            - expect: "#"
-            - send: "apk add python3\n"
+            - send: "save\n"
             - expect: "#"
             - send: "exit\n"
+            - expect: "$"
+            - send: "mkdir -p ~/.ssh\n"
+            - expect: "$"
+            - send: "chmod 700 .ssh\n"
+            - expect: "$"
+            - send: "echo '{{key}}' >> .ssh/authorized_keys\n"
+            - expect: "$"
+            - send: "chmod 600 .ssh/authorized_keys\n"
+            - expect: "$"
+            - send: "exit\n"
+            - expect: "logout"
 ...
