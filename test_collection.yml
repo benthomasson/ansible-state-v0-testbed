@@ -1,0 +1,48 @@
+---
+- name: host expect script
+  hosts: localhost
+  gather_facts: False
+  become: yes
+  vars:
+    key: "{{lookup('file', '~/.ssh/id_rsa.pub')}}"
+  tasks:
+    - with_items:
+       - host1
+       - host2
+      benthomasson.expect.expect:
+        command: "sudo virsh console {{item}}"
+        script:
+            - expect: "password for.*:"
+            - send: "{{passwd}}"
+            - send: "\n"
+            - send: "\n"
+            - expect: "Connected to domain"
+            - send: "\n"
+            - expect: "login:"
+            - send: "root\n"
+            - logfile: "{{item}}.log"
+            - expect: "#"
+            - send: "echo 'auto lo\niface lo inet loopback\nauto eth0\niface eth0 inet dhcp\n' > /etc/network/interfaces\n"
+            - expect: "#"
+            - send: "apk add openssh\n"
+            - expect: "#"
+            - send: "echo 'PermitRootLogin yes' >>  /etc/ssh/sshd_config\n"
+            - expect: "#"
+            - send: "/etc/init.d/sshd start\n"
+            - expect: "#"
+            - send: "/etc/init.d/networking restart\n"
+            - expect: "#"
+            - send: "mkdir -p ~/.ssh\n"
+            - expect: "#"
+            - send: "chmod 700 .ssh\n"
+            - expect: "#"
+            - send: "echo '{{key}}' >> .ssh/authorized_keys\n"
+            - expect: "#"
+            - send: "echo 'http://nl.alpinelinux.org/alpine/v3.12/main/' >> /etc/apk/repositories\n"
+            - expect: "#"
+            - send: "apk update\n"
+            - expect: "#"
+            - send: "apk add python3\n"
+            - expect: "#"
+            - send: "exit\n"
+...
