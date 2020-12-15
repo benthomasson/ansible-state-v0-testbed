@@ -1,0 +1,51 @@
+---
+- name: router expect script
+  hosts: localhost
+  gather_facts: False
+  become: yes
+  vars:
+    key: "{{lookup('file', '~/.ssh/id_rsa.pub')}}"
+  tasks:
+    - with_items:
+       - vyos_r1
+       - vyos_r2
+      benthomasson.expect.expect:
+        command: "sudo virsh console {{item}}"
+        script:
+            - expect: "password for.*:"
+            - send: "{{passwd}}"
+            - send: "\n"
+            - send: "\n"
+            - expect: "Connected to domain"
+            - send: "\n"
+            - expect: "login:"
+            - send: "vyos\n"
+            - expect: "Password:"
+            - send: "vyos\n"
+            - logfile: "{{item}}.log"
+            - expect: "$"
+            - send: "\n"
+            - expect: "$"
+            - send: "configure\n"
+            - expect: "#"
+            - send: "set interfaces ethernet eth0 address dhcp\n"
+            - expect: "#"
+            - send: "set service ssh port 22\n"
+            - expect: "#"
+            - send: "commit\n"
+            - expect: "#"
+            - send: "save\n"
+            - expect: "#"
+            - send: "exit\n"
+            - expect: "$"
+            - send: "mkdir -p ~/.ssh\n"
+            - expect: "$"
+            - send: "chmod 700 .ssh\n"
+            - expect: "$"
+            - send: "echo '{{key}}' >> .ssh/authorized_keys\n"
+            - expect: "$"
+            - send: "chmod 600 .ssh/authorized_keys\n"
+            - expect: "$"
+            - send: "exit\n"
+            - expect: "logout"
+...

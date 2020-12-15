@@ -1,0 +1,31 @@
+---
+- name: start vms
+  hosts: localhost
+  gather_facts: False
+  become: yes
+  tasks:
+    - name: define host1
+      community.libvirt.virt:
+        command: define
+        xml: "{{ lookup('template', 'vms/host1.xml') }}"
+    - name: define host2
+      community.libvirt.virt:
+        command: define
+        xml: "{{ lookup('template', 'vms/host2.xml') }}"
+    - name: define vyos1
+      community.libvirt.virt:
+        command: define
+        xml: "{{ lookup('template', 'vms/vyos_r1.xml') }}"
+    - name: define vyos2
+      community.libvirt.virt:
+        command: define
+        xml: "{{ lookup('template', 'vms/vyos_r2.xml') }}"
+    - name: start vms
+      community.libvirt.virt:
+        name: "{{item}}"
+        state: running
+      with_items:
+        - host1
+        - host2
+        - vyos_r1
+        - vyos_r2

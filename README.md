@@ -63,3 +63,10 @@ Initialization:
     15. Ping everything
         ansible -i inventory.yml -m ping all
     
+
+
+# Automation Requirements:
+
+
+    sudo yum install libvirt-devel libvirt-daemon-kvm libvirt-client
+    pip install libvirt-python

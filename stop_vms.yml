@@ -1,0 +1,15 @@
+---
+- name: start vms
+  hosts: localhost
+  gather_facts: False
+  become: yes
+  tasks:
+    - name: stop vms
+      community.libvirt.virt:
+        name: "{{item}}"
+        state: destroyed
+      with_items:
+        - host1
+        - host2
+        - vyos_r1
+        - vyos_r2
