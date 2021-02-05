@@ -1,0 +1,16 @@
+rules: benthomasson.libvirt.rules
+schema: benthomasson.libvirt.schema
+inventory: localhost.yml
+vms:
+  - name: host1
+    host: localhost
+    template: vms/host1.xml
+  - name: host2
+    host: localhost
+    template: vms/host2.xml
+  - name: vyos_r1
+    host: localhost
+    template: vms/vyos_r1.xml
+  - name: vyos_r2
+    host: localhost
+    template: vms/vyos_r2.xml
