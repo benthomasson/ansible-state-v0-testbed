@@ -1,0 +1,18 @@
+rules: rules/dhcp_rules.yml
+inventory: localhost.yml
+key:  # TODO: remove this, use a lookup pluing in the tasksx
+passwd: # TODO: remote this, fix expect to work with become
+hosts:
+  - name: host1
+    host: localhost
+    template: vms/host1.xml
+  - name: host2
+    host: localhost
+    template: vms/host2.xml
+routers:
+  - name: vyos_r1
+    host: localhost
+    template: vms/vyos_r1.xml
+  - name: vyos_r2
+    host: localhost
+    template: vms/vyos_r2.xml

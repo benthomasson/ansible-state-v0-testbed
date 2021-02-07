@@ -1,0 +1,11 @@
+rules:
+  - rule_selector: root.hosts.index
+    inventory_selector: node.host
+    become: yes
+    create:
+      tasks: tasks/create_host_dhcp.yml
+  - rule_selector: root.routers.index
+    inventory_selector: node.host
+    become: yes
+    create:
+      tasks: tasks/create_router_dhcp.yml
