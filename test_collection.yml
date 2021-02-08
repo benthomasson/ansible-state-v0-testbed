@@ -10,12 +10,8 @@
        - host1
        - host2
       benthomasson.expect.expect:
-        command: "sudo virsh console {{item}}"
+        command: "virsh console {{item}}"
         script:
-            - expect: "password for.*:"
-            - send: "{{passwd}}"
-            - send: "\n"
-            - send: "\n"
             - expect: "Connected to domain"
             - send: "\n"
             - expect: "login:"
