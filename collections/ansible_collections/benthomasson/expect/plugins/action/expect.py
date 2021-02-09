@@ -12,12 +12,26 @@ class ActionModule(ActionBase):
         if task_vars is None:
             task_vars = dict()
         result = super(ActionModule, self).run(tmp, task_vars)
+        pc = self._play_context
+        print(["become", pc.become])
+        print(["become_pass", pc.become_pass])
+        print(["become_method", pc.become_method])
+        print(["pc.become_user", pc.become_user])
         command = self._task.args.get('command', None)
+        if pc.become and pc.become_method == "sudo":
+            command = f'sudo {command}'
         script = self._task.args.get('script', None)
-        pprint(command)
-        pprint(script)
+        pprint(["command", command])
+        pprint(["script", script])
 
         console = pexpect.spawn(command)
+
+        if pc.become and pc.become_method == "sudo":
+            print("Sending sudo password")
+            console.expect("password for.*:")
+            console.send(pc.become_pass)
+            console.send("\n")
+            console.send("\n")
 
         logfile = None
 

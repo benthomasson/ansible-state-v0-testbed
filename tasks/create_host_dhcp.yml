@@ -2,10 +2,6 @@
 - benthomasson.expect.expect:
     command: "sudo virsh console {{node.name}}"
     script:
-        - expect: "password for.*:"
-        - send: "{{state.passwd}}"
-        - send: "\n"
-        - send: "\n"
         - expect: "Connected to domain"
         - send: "\n"
         - expect: "login:"
@@ -26,7 +22,7 @@
         - expect: "#"
         - send: "chmod 700 .ssh\n"
         - expect: "#"
-        - send: "echo '{{state.key}}' >> .ssh/authorized_keys\n"
+        - send: "echo '{{lookup('file', '~/.ssh/id_rsa.pub')}}' >> .ssh/authorized_keys\n"
         - expect: "#"
         - send: "echo 'http://nl.alpinelinux.org/alpine/v3.12/main/' >> /etc/apk/repositories\n"
         - expect: "#"
