@@ -1,7 +1,6 @@
-rules: rules/dhcp_rules.yml
-inventory: localhost.yml
-key:  # TODO: remove this, use a lookup pluing in the tasksx
-passwd: # TODO: remote this, fix expect to work with become
+meta:
+  rules: rules/dhcp_rules.yml
+  inventory: localhost.yml
 hosts:
   - name: host1
     host: localhost

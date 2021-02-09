@@ -1,6 +1,7 @@
-rules: benthomasson.libvirt.rules
-schema: benthomasson.libvirt.schema
-inventory: localhost.yml
+meta:
+  rules: benthomasson.libvirt.rules
+  schema: benthomasson.libvirt.schema
+  inventory: localhost.yml
 vms:
   - name: host1
     host: localhost

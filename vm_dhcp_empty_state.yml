@@ -1,2 +1,3 @@
-rules: rules/dhcp_rules.yml
-inventory: localhost.yml
+meta:
+  rules: rules/dhcp_rules.yml
+  inventory: localhost.yml
